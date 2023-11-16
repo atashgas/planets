@@ -22,8 +22,8 @@ module --quiet purge 		#this resets the module environment, always good to start
 FILENAME=$1
 module load BIOS-IN5410/HT-2023
 ##create a gvcf.list
-ls *gvcf.gz > gvcf.list # This creates a text file with all the HaplotypeCalled.gvcf.gz 
-filenames.
+ls ../walrus_SNP_calling/gvcf/*gvcf.gz > gvcf.list # This creates a text file with all the HaplotypeCalled.gvcf.gz 
+
 ##force create and remove an empty directory (needed to prevent errors when rerunning)
 mkdir -p ${FILENAME}_DB; rm -r ${FILENAME}_DB
 ##run GATK database import (2nd step)
@@ -33,6 +33,11 @@ gatk GenomicsDBImport -V gvcf.list \
 ##run GATK genotype GVCF (3rd step)
 gatk GenotypeGVCFs -R ../Orosv1mt.fasta \
 -V gendb://${FILENAME}_DB -O ${FILENAME}.vcf.gz
+##Access to PCA program SMART PCA
+export PATH="/projects/ec34/biosin5410/sbatch_intro/SNP_calling/script/:$PATH"/
+
+##Run PCA program SMART PCA
+Run_PCA ${FILENAME}.vcf.gz
 
 ## Message that you are done with the job
 echo "Finished running jobs"
